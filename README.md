@@ -2,6 +2,13 @@
 
 Force-directed graph made using [D3.js (v6)](https://github.com/d3/d3).
 
+## About the Fork
+
+This project started based on some other examples until the discovering
+[hishosho/d3-network-graph](https://github.com/hishosho/d3-network-graph), which
+became the major basis. Changes made, improvements, and a rewrite. Too much
+happened and the one initial commit can't summarize it all.
+
 ## Features
 
  * Force simulation.
