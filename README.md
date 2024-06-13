@@ -9,6 +9,12 @@ This project started based on some other examples until the discovering
 became the major basis. Changes made, improvements, and a rewrite. Too much
 happened and the one initial commit can't summarize it all.
 
+## [Live Demo](https://acodili-jg.github.io/d3-network-graph/)
+
+The live demo is hosted through GitHub Pages.
+
+<https://acodili-jg.github.io/d3-network-graph/>
+
 ## Features
 
  * Force simulation.
