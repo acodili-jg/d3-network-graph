@@ -370,9 +370,13 @@ class Network {
         const nxm = nx2 - nx * arrow;
         const nym = ny2 - ny * arrow;
 
+        const factor = 10;
+        const ofx = ny * factor;
+        const ofy = -nx * factor;
+
         return bi ? `
             M ${nx1}, ${ny1}
-            Q ${(x1 + nx2) / 2} ${(y1 + ny2) / 2 + 10 * link.source.id.localeCompare(link.target.id)}, ${nxm} ${nym}
+            Q ${ofx + (x1 + nx2) / 2} ${ofy + (y1 + ny2) / 2}, ${nxm} ${nym}
             M ${nx2}, ${ny2}
         ` : `
             M ${nx1}, ${ny1}
