@@ -33,6 +33,9 @@ First clone the repository locally:
 git clone https://github.com/acodili-jg/d3-network-graph.git
 ```
 
-This repository needs to be locally hosted for some scripts to work. See:
+Dependencies are included in the repository.
+
+Running will require locally hosting this repository as some scripts won't work.
+Refer to the link below to set-up a local testing server:
 
 <https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Tools_and_setup/set_up_a_local_testing_server>
