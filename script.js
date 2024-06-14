@@ -338,51 +338,69 @@ class Network {
     }
 
     __link_path(link) {
-        const bi = this.links.has([link.target.id, link.source.id]);
-        const ends = 1 + bi;
-        const arrow = 5;
+        // It's bidirectional if there's the same link but reversed.
+        const bidirectional = this.links.has([link.target.id, link.source.id]);
+        // TODO: consider extracting as class constant
+        const arrow_head_length = 5;
 
         const x1 = parseFloat(link.source.x);
         const y1 = parseFloat(link.source.y);
-        const r1 = parseFloat(link.source.r || 10) + arrow * bi;
+        // Accomodate arrow head if bidirectional.
+        let start_offset = parseFloat(link.source.r || 10) + arrow_head_length * bidirectional;
+
         const x2 = parseFloat(link.target.x);
         const y2 = parseFloat(link.target.y);
-        const r2 = parseFloat(link.target.r || 10);
+        // Accomodate arrow head.
+        const end_offset = parseFloat(link.target.r || 10) + arrow_head_length;
 
         // Get the direction vector.
-        let nx = x2 - x1;
-        let ny = y2 - y1;
+        let direction_x = x2 - x1;
+        let direction_y = y2 - y1;
 
-        const mag = Math.hypot(nx, ny);
-        if (mag <= r1 + r2 + arrow * ends) {
+        const normal_magnitude = Math.hypot(direction_x, direction_y);
+
+        // Don't render when too close to nodes.
+        if (normal_magnitude <= start_offset + end_offset) {
             return '';
         }
 
         // Normalize direction vector
-        nx /= mag;
-        ny /= mag;
+        direction_x /= normal_magnitude;
+        direction_y /= normal_magnitude;
 
         // Trim parts inside circles.
-        const nx1 = x1 + nx * r1;
-        const ny1 = y1 + ny * r1;
-        const nx2 = x2 - nx * r2;
-        const ny2 = y2 - ny * r2;
-        const nxm = nx2 - nx * arrow;
-        const nym = ny2 - ny * arrow;
+        const start_x = x1 + direction_x * start_offset;
+        const start_y = y1 + direction_y * start_offset;
+        const end_x = x2 - direction_x * end_offset;
+        const end_y = y2 - direction_y * end_offset;
+        const arrow_head_x = end_x + direction_x * arrow_head_length;
+        const arrow_head_y = end_y + direction_y * arrow_head_length;
 
-        const factor = 10;
-        const ofx = ny * factor;
-        const ofy = -nx * factor;
+        if (bidirectional) {
+            const middle_x = (start_x + end_x) / 2;
+            const middle_y = (start_y + end_y) / 2;
 
-        return bi ? `
-            M ${nx1}, ${ny1}
-            Q ${ofx + (x1 + nx2) / 2} ${ofy + (y1 + ny2) / 2}, ${nxm} ${nym}
-            M ${nx2}, ${ny2}
-        ` : `
-            M ${nx1}, ${ny1}
-            L ${nxm}, ${nym}
-            M ${nx2}, ${ny2}
-        `;
+            const normal_x = direction_y;
+            const normal_y = -direction_x;
+            
+            const curve_factor = 10;
+            const pivot_x = middle_x + normal_x * curve_factor;
+            const pivot_y = middle_y + normal_y * curve_factor;
+
+            // Curved line
+            return `
+                M ${start_x}, ${start_y}
+                Q ${pivot_x} ${pivot_y}, ${end_x} ${end_y}
+                M ${arrow_head_x}, ${arrow_head_y}
+            `;
+        } else {
+            // Straight line
+            return `
+                M ${start_x}, ${start_y}
+                L ${end_x}, ${end_y}
+                M ${arrow_head_x}, ${arrow_head_y}
+            `;
+        }
     }
 }
 
